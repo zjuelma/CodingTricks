@@ -139,3 +139,94 @@ def count_coins(total):
     return count_ways(total, 25)
 ```
 
+```python
+def buy(required_fruits, prices, total_amount):
+    """Print ways to buy some of each fruit so that the sum of prices is amount.
+
+    >>> prices = {'oranges': 4, 'apples': 3, 'bananas': 2, 'kiwis': 9}
+    >>> buy(['apples', 'oranges', 'bananas'], prices, 12)
+    [2 apples][1 orange][1 banana]
+    >>> buy(['apples', 'oranges', 'bananas'], prices, 16)
+    [2 apples][1 orange][3 bananas]
+    [2 apples][2 oranges][1 banana]
+    >>> buy(['apples', 'kiwis'], prices, 36)
+    [3 apples][3 kiwis]
+    [6 apples][2 kiwis]
+    [9 apples][1 kiwi]
+    """
+    def add(fruits, amount, cart):
+        if fruits == [] and amount == 0:
+            print(cart)
+        elif fruits and amount > 0:
+            fruit = fruits[0]
+            next = fruits[1:]
+            price = prices[fruit]
+            for k in range(1,amount // price + 1):
+                add(next, amount - k * price, cart + display(fruit,k) if k > 0 else '')
+    add(required_fruits, total_amount, '')
+```
+
+```python
+def make_change(amount, coins):
+    """Return a list of coins that sum to amount, preferring the smallest coins
+    available and placing the smallest coins first in the returned list.
+
+    The coins argument is a dictionary with keys that are positive integer
+    denominations and values that are positive integer coin counts.
+
+    >>> make_change(2, {2: 1})
+    [2]
+    >>> make_change(2, {1: 2, 2: 1})
+    [1, 1]
+    >>> make_change(4, {1: 2, 2: 1})
+    [1, 1, 2]
+    >>> make_change(4, {2: 1}) == None
+    True
+
+    >>> coins = {2: 2, 3: 2, 4: 3, 5: 1}
+    >>> make_change(4, coins)
+    [2, 2]
+    >>> make_change(8, coins)
+    [2, 2, 4]
+    >>> make_change(25, coins)
+    [2, 3, 3, 4, 4, 4, 5]
+    >>> coins[8] = 1
+    >>> make_change(25, coins)
+    [2, 2, 4, 4, 5, 8]
+    """
+    if not coins:
+        return None
+    min_coin = min(coins.keys())
+    rest = remove_one(coins,min_coin)
+    if amount < min_coin:
+        return None
+    elif amount == min_coin:
+        return [min_coin]
+    else:
+        result = make_change(amount - min_coin,rest)
+        if result:
+            return [min_coin] + result
+        else: 
+            return make_change(amount,rest)
+    
+        
+        
+def remove_one(coins, coin):
+    """Remove one coin from a dictionary of coins. Return a new dictionary,
+    leaving the original dictionary coins unchanged.
+
+    >>> coins = {2: 5, 3: 2, 6: 1}
+    >>> remove_one(coins, 2) == {2: 4, 3: 2, 6: 1}
+    True
+    >>> remove_one(coins, 6) == {2: 5, 3: 2}
+    True
+    >>> coins == {2: 5, 3: 2, 6: 1} # Unchanged
+    True
+    """
+    copy = dict(coins)
+    count = copy.pop(coin) - 1  # The coin denomination is removed
+    if count:
+        copy[coin] = count      # The coin denomination is added back
+    return copy
+```
+
